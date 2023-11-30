@@ -73,7 +73,7 @@ def model_provider(pre_process=True, post_process=True) -> Union[PythiaModel, me
     else:
         assert(args.context_parallel_size == 1), "Context parallelism is only supported with Megatron Core!"
 
-        model = megatron.model.GPTModel(
+        model = megatron.model.PythiaModel(
             config,
             num_tokentypes=0,
             parallel_output=True,
