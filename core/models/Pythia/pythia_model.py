@@ -17,8 +17,8 @@ from megatron.core.transformer.transformer_config import TransformerConfig
 from megatron.core.utils import make_tp_sharded_tensor_for_checkpoint
 
 
-class GPTModel(LanguageModule):
-    """GPT Transformer language model.
+class PythiaModel(LanguageModule):
+    """Pythia Transformer language model.
 
     Args:
         config (TransformerConfig): Transformer config
@@ -48,7 +48,7 @@ class GPTModel(LanguageModule):
         parallel_output: bool = True,
         share_embeddings_and_output_weights: bool = False,
         position_embedding_type: Literal['learned_absolute', 'rope'] = 'learned_absolute',
-        rotary_percent: float = 1.0,
+        rotary_percent: float = 0.25,
         rotary_base: int = 10000,
         seq_len_interpolation_factor: Optional[float] = None,
     ) -> None:
@@ -98,7 +98,8 @@ class GPTModel(LanguageModule):
                 config.hidden_size,
                 self.vocab_size,
                 config=config,
-                init_method=config.init_method,
+                init_method='small_init_method',
+                output_layer_init_method = config.wang_init_method,
                 bias=False,
                 skip_bias_add=False,
                 gather_output=not self.parallel_output,

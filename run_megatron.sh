@@ -193,7 +193,7 @@ elif [ "$MODEL" = "gpt2large" ]; then
 elif ["$MODEL" = "pythia"]; then
 	/home/ldai8/data/conda3/envs/pytorchNCCL-hao/bin/python -m torch.distributed.launch $DISTRIBUTED_ARGS pretrain_pythia70m.py \
 	--num-layers 6 --hidden-size 512 --num-attention-heads 8 --seq-length 2048 --max-position-embeddings 2048 \
-	--tensor-model-parallel-size 1 --use-rotary-position-embeddings $MICRO_BATCH_SIZE_PYTHIA --global-batch-size $GLOBAL_BATCH_SIZE_PYTHIA \
+	--tensor-model-parallel-size 1 --rotary-percent 0.25 --use-rotary-position-embeddings $MICRO_BATCH_SIZE_PYTHIA --global-batch-size $GLOBAL_BATCH_SIZE_PYTHIA \
 	--weight-decay 0.1 --hidden-dropout 0 --attention-dropout 0.1 --lr 0.001 --adam-beta2 0.95 --min-lr 0.0001 \
 	--train-iters 143000 --lr-decay-iters 143000 --lr-decay-style cosine --untie-embeddings-and-output-weights --vocab-file $VOCAB_FILE \
 	--merge-file $MERGE_FILE --lr-warmup-fraction 0.01 --fp16 --initial-loss-scale 4096 --log-interval 10 --save-interval 500 \

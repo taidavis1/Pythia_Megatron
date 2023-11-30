@@ -16,7 +16,7 @@ from megatron.core.datasets.blended_megatron_dataset_builder import BlendedMegat
 from megatron.core.datasets.blended_megatron_dataset_config import GPTDatasetConfig
 from megatron.core.datasets.gpt_dataset import GPTDataset
 import megatron.model
-from megatron.core.models.gpt import GPTModel
+from megatron.core.models.Pythia import PythiaModel
 from megatron.training import pretrain
 from megatron.core.transformer.spec_utils import import_module
 from megatron.utils import (
@@ -30,10 +30,10 @@ from megatron.core.models.gpt.gpt_layer_specs import (
     gpt_layer_with_transformer_engine_spec_moe
 )
 
-def model_provider(pre_process=True, post_process=True) -> Union[GPTModel, megatron.model.GPTModel]:
+def model_provider(pre_process=True, post_process=True) -> Union[PythiaModel, megatron.model.PythiaModel]:
     """Builds the model.
 
-    If you set the use_mcore_models to True, it will return the mcore GPT model and if not the legacy GPT model.
+    If you set the use_mcore_models to True, it will return the mcore PythiaModel model and if not the legacy GPT model.
 
     Args:
         pre_process (bool, optional): Set to true if you need to compute embedings. Defaults to True.
@@ -45,7 +45,7 @@ def model_provider(pre_process=True, post_process=True) -> Union[GPTModel, megat
     """
     args = get_args()
 
-    print_rank_0('building GPT model ...')
+    print_rank_0('building Pythia model ...')
     config = core_transformer_config_from_args(get_args())
 
     if args.use_mcore_models:
@@ -57,7 +57,7 @@ def model_provider(pre_process=True, post_process=True) -> Union[GPTModel, megat
             else:
                 transformer_layer_spec = gpt_layer_with_transformer_engine_spec_moe
 
-        model = GPTModel(
+        model = PythiaModel(
             config=config,
             transformer_layer_spec=transformer_layer_spec,
             vocab_size=args.padded_vocab_size,
@@ -162,7 +162,7 @@ def loss_func(loss_mask: Tensor, output_tensor: Tensor):
     return loss * args.context_parallel_size, {'lm loss': averaged_loss[0]}
 
 
-def forward_step(data_iterator, model: GPTModel):
+def forward_step(data_iterator, model: PythiaModel):
     """Forward training step.
 
     Args:
