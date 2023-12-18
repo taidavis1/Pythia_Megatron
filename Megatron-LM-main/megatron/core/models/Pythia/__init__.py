@@ -1,1 +1,0 @@
-from .pythia_model import PythiaModel

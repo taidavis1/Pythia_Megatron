@@ -93,7 +93,7 @@ elif [ "$MODEL" = "gpt2large" ]; then
 	export DATA_PATH=/home/yuke/lyd/Megatron-LM/my-gpt2_text_document
 
 elif ["$MODEL" = "pythia"]; then
-	export CHECKPOINT_PATH=/home/yuke/lyd/Megatron-LM/checkpoints/pythia_70m
+	export CHECKPOINT_PATH=/home/yuke/lyd/Megatron-LM/checkpoints/pythia_1B
 	export VOCAB_FILE=/home/yuke/lyd/Megatron-LM/model/gpt2-vocab.json
 	export MERGE_FILE=/home/yuke/lyd/Megatron-LM/model/gpt2-merges.txt
 	export DATA_PATH=/home/yuke/lyd/Megatron-LM/my-gpt2_text_document
@@ -191,13 +191,13 @@ elif [ "$MODEL" = "gpt2large" ]; then
 	--data-path $DATA_PATH > /home/ldai8/bash/Megatron_data_output_profile/${MODEL}/2gpus-mbs${MICRO_BATCH_SIZE_GPT2_L}/${PROTOCOL}/${MODEL}-${PROTOCOL}-2gpus-${NODE_RANK}-mbs-${MICRO_BATCH_SIZE_GPT2_L}.out
 
 elif ["$MODEL" = "pythia"]; then
-	/home/ldai8/data/conda3/envs/pytorchNCCL-hao/bin/python -m torch.distributed.launch $DISTRIBUTED_ARGS pretrain_pythia70m.py \
-	--num-layers 6 --hidden-size 512 --num-attention-heads 8 --seq-length 2048 --max-position-embeddings 2048 \
+	/home/ldai8/data/conda3/envs/pytorchNCCL-hao/bin/python -m torch.distributed.launch $DISTRIBUTED_ARGS pretrain_pythia1B.py \
+	--num-layers 24 --hidden-size 2048 --num-attention-heads 16 --seq-length 2048 --max-position-embeddings 2048 \
 	--tensor-model-parallel-size 1 --rotary-percent 0.25 --use-rotary-position-embeddings --micro-batch-size $MICRO_BATCH_SIZE_PYTHIA \
-	--global-batch-size $GLOBAL_BATCH_SIZE_PYTHIA --weight-decay 0.1 --hidden-dropout 0 --attention-dropout 0 --lr 0.001 --adam-beta2 0.95 --min-lr 0.0001 \
+	--global-batch-size $GLOBAL_BATCH_SIZE_PYTHIA --weight-decay 0.1 --hidden-dropout 0 --attention-dropout 0 --lr 0.0002 --adam-beta2 0.95 --min-lr 0.00002 \
 	--train-iters 143000 --lr-decay-iters 143000 --lr-decay-style cosine --untie-embeddings-and-output-weights --vocab-file $VOCAB_FILE \
 	--merge-file $MERGE_FILE --lr-warmup-fraction 0.01 --fp16 --initial-loss-scale 4096 --log-interval 10 --save-interval 500 \
-	--eval-interval 100000 --eval-iters 10 --save $CHECKPOINT_PATH --load $CHECKPOINT_PATH \
+	--eval-interval 40000 --eval-iters 10 --save $CHECKPOINT_PATH --load $CHECKPOINT_PATH \
 	--data-path $DATA_PATH > /home/ldai8/bash/Megatron_data_output_profile/${MODEL}/2gpus-mbs${MICRO_BATCH_SIZE_PYTHIA}/${PROTOCOL}/${MODEL}-${PROTOCOL}-2gpus-${NODE_RANK}-mbs-${MICRO_BATCH_SIZE_PYTHIA}.out
 else
     /home/ldai8/data/conda3/envs/pytorchNCCL-hao/bin/python -m torch.distributed.launch $DISTRIBUTED_ARGS pretrain_t5.py --num-layers 24 --hidden-size 1024 \
@@ -210,18 +210,9 @@ else
 fi
 
 
-
-
-
-
-
-
 # kill %1
 # kill %2
 # kill %3
-
-
-
 
 
 
